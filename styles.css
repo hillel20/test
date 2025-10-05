@@ -1,0 +1,2135 @@
+/* =======================================================================
+   N A T A N Ë L   &   O R A   —   S T Y L E S   P R E M I U M
+   -----------------------------------------------------------------------
+   PARTIE 1/3 :
+   - Variables, reset, tokens design, utilitaires
+   - Typo & accessibilité
+   - Layout global, navbar + hamburger + sélecteur de langue
+   - Hero (background marbre), overlay ivoire
+   - Compteur responsive (1 ligne mobile / 4 pastilles desktop)
+   - CTA (“Voir l’invitation”), boutons flottants (haut + musique)
+   - Animations reveal, barre de progression
+   -----------------------------------------------------------------------
+   Remarques :
+   - Noms de fichiers attendus : logo.png, fond.jpeg (hero), card.jpg (papier)
+   - Les PARTIES 2 & 3 ajouteront : section Houppa/Soirée + RSVP + footer + responsive extra
+   ======================================================================= */
+
+/* ============================= TOKENS ============================= */
+
+:root {
+  /* Couleurs principales */
+  --primary: #C1AD97;           /* or rosé */
+  --primary-d: #B4997E;         /* hover */
+  --gold: #C49A6C;
+  --gold-d: #B18149;
+
+  /* Neutres */
+  --bg: #FAF6F2;                /* ivoire papier */
+  --text: #2b2b2b;
+  --muted: #6f6b65;
+  --ring: #eadfcc;
+  --panel: #ffffffee;
+
+  /* Effets */
+  --shadow-1: 0 6px 24px rgba(0,0,0,.10);
+  --shadow-2: 0 14px 36px rgba(0,0,0,.18);
+  --blur: 8px;
+
+  /* Typos (on harmonise avec la ref) */
+  --ff-script: "Cardo", serif; /* tu pourras switcher vers Kapakana si tu veux */
+  --ff-serif: "Playfair Display", serif;
+  --ff-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Helvetica Neue", sans-serif;
+
+  /* Rythme */
+  --radius-xs: 10px;
+  --radius: 14px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  /* Z-index */
+  --z-nav: 1000;
+  --z-progress: 2000;
+  --z-fab: 1100;
+}
+
+/* ============================= RESET + BASE ============================= */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--bg);
+  font-family: var(--ff-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; color: inherit; }
+
+/* Focus visibles pour accessibilité */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Helpers sémantiques */
+.main-color { color: var(--primary); font-weight: 700; }
+.italic { font-style: italic; }
+
+/* ============================= ANIMATIONS GLOBALES ============================= */
+
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity .6s ease-out, transform .6s ease-out; }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* Barre de progression scroll */
+#scroll-progress {
+  position: fixed; inset: 0 auto auto 0; height: 4px; width: 0%;
+  background: var(--primary);
+  z-index: var(--z-progress);
+  transition: width .2s ease-out;
+}
+
+/* ============================= NAVBAR ============================= */
+
+#navbar {
+  position: fixed; inset: 0 0 auto 0;
+  z-index: var(--z-nav);
+  transition: background .3s ease, box-shadow .3s ease, color .3s ease;
+  font-family: var(--ff-serif);
+  will-change: background;
+}
+
+#navbar.transparent {
+  background: rgba(137, 105, 105, 0.51);
+  box-shadow: none;
+}
+
+#navbar.scrolled {
+  background: var(--primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,.10);
+}
+
+#navbar nav {
+  display: flex; align-items: center; gap: 16px;
+  padding: 10px 40px;
+}
+
+/* Logo */
+.logo {
+  height: 80px; width: auto;
+  transition: transform .3s ease, opacity .3s ease;
+}
+.logo:hover { transform: scale(1.05); }
+.logo.fade { opacity: 0; }
+
+/* Liens */
+.nav-links {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  gap: 24px;
+}
+#navbar nav a {
+  position: relative; color: #fff; font-weight: 800; font-size: 24px; white-space: nowrap;
+}
+#navbar nav a::after {
+  content: ""; position: absolute; left: 0; bottom: -5px;
+  height: 2px; width: 0; background: #A60808; transition: width .3s;
+}
+#navbar nav a:hover { color: #cc2626; }
+#navbar nav a:hover::after { width: 100%; }
+
+/* Hamburger (mobile) */
+.hamburger {
+  display: none; flex-direction: column; gap: 5px; color: #fff;
+}
+.hamburger span {
+  width: 25px; height: 3px; background: currentColor; border-radius: 2px; transition: transform .3s, opacity .3s;
+}
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(6px,-6px); }
+
+@media (max-width: 768px) {
+  #navbar nav { padding: 10px 20px; justify-content: space-between; }
+  .hamburger { display: flex; }
+  .nav-links {
+    position: absolute; inset: 100% 0 auto 0;
+    background: rgba(255,255,255,.92); backdrop-filter: blur(6px);
+    flex-direction: column; gap: 18px; padding: 16px 0;
+    display: none;
+  }
+  #navbar.transparent .nav-links { background: rgba(57,57,57,0.51); }
+  #navbar.scrolled .nav-links { background: var(--primary); }
+  .nav-links.active { display: flex; }
+  #navbar nav a { color: #fff; font-size: 20px; }
+}
+
+/* ============================= SELECTEUR LANGUE ============================= */
+
+#language-switcher {
+  display: flex; gap: 10px;
+  background: rgba(255,255,255,.8); backdrop-filter: blur(6px);
+  border-radius: 30px; padding: 6px 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.1);
+}
+#language-switcher button {
+  width: 28px; height: 28px; border: none; background: none;
+  border-radius: 50%; cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+}
+#language-switcher button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+
+/* Support he/fr */
+html[data-lang="he"], body[data-lang="he"] { direction: rtl; }
+html[data-lang="fr"], body[data-lang="fr"] { direction: ltr; }
+
+/* ============================= HERO (ACCUEIL) ============================= */
+
+#accueil {
+  min-height: 100vh;
+  display: grid; place-items: center;
+  position: relative;
+  padding-top: 80px;
+  text-align: center; color: #fff;
+  isolation: isolate;
+}
+
+.hero-bg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  filter: brightness(.95) contrast(1.02);
+  z-index: 0;
+}
+
+/* Overlay ivoire — plus lumineux que gris */
+#accueil::before {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  background: rgba(183, 51, 51, 0.22);
+  pointer-events: none;
+}
+
+#accueil .overlay {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 1200px;
+  padding: 32px 16px;
+}
+
+/* Noms */
+.names { 
+  font-family: var(--ff-script);
+  font-style: italic;
+  color: #954a0c;
+  text-shadow: 2px 2px 5px rgba(0,0,0,.6);
+  display: inline-block;
+  border-radius: var(--radius-xs);
+  margin: 0 0 20px;
+}
+.names-font { font-family: var(--ff-script); }
+/* HERO Title avec la même calligraphie que Houppa & Soirée */
+#accueil h1.names.names-font {
+  font-family: "Great Vibes", cursive;
+  font-weight: 400;
+  font-size: clamp(48px, 9vw, 120px);
+  line-height: 1;
+  color: var(--primary-color);
+  text-shadow: 0 1px 0 rgba(255,255,255,.7),
+               0 10px 25px rgba(0,0,0,.25);
+}
+
+/* Optionnel : ajustement des spans à l'intérieur */
+#accueil h1.names.names-font span {
+  font-family: inherit; /* reprend Great Vibes */
+  color: inherit;       /* reprend la couleur or */
+}
+
+#accueil .et { font-family: var(--ff-serif); font-weight: 800; }
+
+/* ============================= COMPTEUR ============================= */
+
+.compteur {
+  display: flex; justify-content: center; align-items: center;
+  gap: 12px; margin: 22px 0 30px;
+  font-family: var(--ff-serif);
+}
+
+.compteur-bloc {
+  position: relative;
+  width: 92px; height: 92px;
+  padding: 10px;
+  background: rgba(193,173,151,.25);
+  border: 2px solid rgba(193,173,151,.65);
+  border-radius: 50%;
+  text-align: center;
+  font-size: 22px;
+  transition: transform .2s ease;
+  box-shadow: 0 2px 6px rgba(214,135,157,.12);
+}
+.compteur-bloc:hover { transform: translateY(-2px); }
+.compteur-bloc .nombre { font-weight: 700; font-size: 1.4em; }
+.compteur-bloc .label { font-size: .7em; letter-spacing: .06em; text-transform: uppercase; }
+
+@media (max-width: 992px) {
+  .compteur-bloc { width: 85px; height: 85px; font-size: 20px; }
+  .compteur-bloc .label { font-size: .68em; }
+}
+@media (max-width: 768px) {
+  .compteur { gap: 10px; }
+  .compteur-bloc { width: 70px; height: 70px; font-size: 18px; padding: 8px; }
+  .compteur-bloc .label { font-size: .62em; }
+}
+@media (max-width: 520px) {
+  /* Mobile : en pastilles-chips 1 ligne, plus compactes */
+  .compteur { gap: 8px; flex-wrap: wrap; }
+  .compteur-bloc {
+    width: auto; height: auto; border-radius: var(--radius-pill);
+    padding: 8px 10px;
+    background: rgba(193,173,151,.18);
+    border-color: rgba(193,173,151,.55);
+    box-shadow: none;
+  }
+  .compteur-bloc .nombre { font-size: 1rem; }
+  .compteur-bloc .label { font-size: .65rem; }
+}
+
+/* ============================= CTA (HERO) ============================= */
+
+.landing-button {
+  display: inline-block;
+  padding: 12px 22px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--primary);
+  border: none;
+  border-radius: 30px;
+  box-shadow: var(--shadow-1);
+  transition: transform .15s ease, background .2s ease, box-shadow .2s ease;
+}
+.landing-button:hover {
+  background: var(--primary-d);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-2);
+}
+
+/* ============================= BOUTONS FLOTTANTS ============================= */
+
+#scrollToTop, #musicToggle {
+  position: fixed; right: 28px; width: 45px; height: 45px;
+  border-radius: 50%; border: 0; color: #fff;
+  background: var(--primary); box-shadow: 0 4px 8px rgba(0,0,0,.15);
+  z-index: var(--z-fab);
+  display: none; /* JS toggles display */
+}
+#scrollToTop { bottom: 28px; }
+#musicToggle { bottom: 86px; }
+#scrollToTop:hover, #musicToggle:hover { background: var(--primary-d); }
+
+@media (max-width: 480px) {
+  #scrollToTop, #musicToggle { right: 20px; width: 40px; height: 40px; }
+  #musicToggle { bottom: 72px; }
+}
+
+/* ============================= UTILITAIRES ============================= */
+
+/* Containers */
+.container { width: 100%; max-width: 1100px; margin-inline: auto; padding-inline: 16px; }
+
+/* Grids rapides */
+.grid { display: grid; gap: 16px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
+@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Align */
+.center { text-align: center; }
+.flex { display: flex; align-items: center; gap: 12px; }
+.flex-center { display: flex; justify-content: center; align-items: center; gap: 12px; }
+.wrap { flex-wrap: wrap; }
+
+/* Marges */
+.mt-0{ margin-top: 0 !important; }
+.mt-4{ margin-top: 4px !important; }
+.mt-6{ margin-top: 6px !important; }
+.mt-8{ margin-top: 8px !important; }
+.mt-10{ margin-top: 10px !important; }
+.mt-12{ margin-top: 12px !important; }
+.mt-16{ margin-top: 16px !important; }
+.mt-20{ margin-top: 20px !important; }
+.mb-0{ margin-bottom: 0 !important; }
+.mb-6{ margin-bottom: 6px !important; }
+.mb-8{ margin-bottom: 8px !important; }
+.mb-12{ margin-bottom: 12px !important; }
+.mb-16{ margin-bottom: 16px !important; }
+.mb-20{ margin-bottom: 20px !important; }
+
+/* Couleurs helpers */
+.text-primary { color: var(--primary) !important; }
+.text-gold { color: var(--gold) !important; }
+.bg-ivory { background: var(--bg) !important; }
+.bg-panel { background: var(--panel) !important; }
+
+/* Filets & puces fines (utilisables partout) */
+.hr-gold {
+  height: 2px; width: min(320px,42vw); margin: 10px auto 24px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.bullet-gold { position: relative; padding-left: 16px; }
+.bullet-gold::before {
+  content: ""; position: absolute; left: 0; top: .72em; transform: translateY(-50%);
+  width: 5px; height: 5px; border-radius: 50%;
+  background: linear-gradient(180deg,#d7b289,#b18149);
+  box-shadow: 0 0 0 1px rgba(177,129,73,.28);
+}
+
+/* RTL helper (pour lignes hébreu isolées) */
+.rtl-line {
+  direction: rtl; text-align: center;
+  letter-spacing: .03em; word-spacing: .12em;
+}
+
+/* ================================== FIN PARTIE 1/3 ================================== */
+/* =======================================================================
+   PARTIE 2/3 — SECTION "HOUPPA & SOIRÉE" (papier plein fond)
+   - Fond floral plein écran (card.jpg) avec voile lisible
+   - Filigrane logo centré (opacité très faible)
+   - Titre hébreu en arc (CircleType gère la courbure via JS)
+   - Mise en colonnes : Parents (L/R) + Noms & infos au centre
+   - Typo premium (Playfair/Script), puces dorées fines
+   - Boutons évènement (Calendar .ics, Waze, Moovit)
+   - Ornements optionnels (coins) + focus état RTL
+   - Responsive fin : ≥1400 / 1200 / 992 / 768 / 560 / 420
+   ======================================================================= */
+
+/* ---------- Conteneur principal papier ---------- */
+.paper{
+  position:relative; isolation:isolate;
+  padding:110px 16px 120px;
+  text-align:center; overflow:hidden;
+  /* image au <img.paper-bg> pour bien gérer lazy/object-fit */
+}
+
+/* Fond : image de papier (card.jpg) + voile lisibilité */
+.paper-bg{
+  position:absolute; inset:0; z-index:0;
+  width:100%; height:100%; object-fit:cover; object-position:center;
+  filter: contrast(1.02) saturate(1.02) brightness(1);
+}
+.paper::before{
+  content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  /* voile doux + vignette haute (pour le texte) */
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.56), rgba(255,255,255,.68) 28%, rgba(255,255,255,.40) 60%, rgba(255,255,255,0) 100%),
+    radial-gradient(120% 100% at 50% 0%, rgba(255,255,255,.26), rgba(255,255,255,0) 72%);
+}
+
+/* Filigrane logo (discret, centré haut) */
+.paper-watermark{
+  position:absolute; left:50%; top:220px; transform:translateX(-50%);
+  width:min(170px,26vw); opacity:.045; filter:grayscale(100%);
+  z-index:0; pointer-events:none;
+}
+
+/* Contrainte de largeur + stacking au-dessus du voile/fond */
+.paper-inner{
+  position:relative; z-index:1;
+  width:100%; max-width:1100px; margin-inline:auto; padding-inline:16px;
+}
+
+/* ---------- Titre en arc + sous-titre ---------- */
+#arc-title {
+  letter-spacing: 3px !important;/* espace horizontal entre les lettres */
+  font-weight: 500; /* garde une belle finesse */
+  direction: rtl; /* pour être sûr que l’hébreu s’aligne bien */
+}
+
+.middle-logo{ width:160px; margin: 8px auto 2px; }
+@media (max-width: 992px){ .middle-logo{ width:120px; } }
+
+.script-title{
+  font-family:var(--ff-serif);
+  font-weight:700;
+  color:var(--gold-d);
+  font-size: clamp(32px, 6.1vw, 60px);
+  letter-spacing:.3px;
+  margin: 6px 0 6px;
+}
+.hairline{
+  height:2px; width:min(340px,46vw); margin:10px auto 28px; border-radius:2px;
+  background: linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+
+/* ---------- Grille "Parents / Noms & Infos / Parents" ---------- */
+.columns{
+  display:grid; align-items:start;
+  grid-template-columns: 1fr 1.38fr 1fr;
+  gap: 34px;
+  margin-top: 14px;
+}
+@media (min-width:1400px){
+  .columns{ grid-template-columns: 1fr 1.5fr 1fr; gap: 42px; }
+}
+@media (max-width:1200px){
+  .columns{ grid-template-columns: 1fr 1.32fr 1fr; gap: 28px; }
+}
+@media (max-width:992px){
+  .columns{ grid-template-columns: 1fr; gap: 20px; text-align:left; }
+}
+
+/* Colonnes */
+.col{
+  font-size:18px; color:#534a42; line-height:1.68;
+}
+.col h3{
+  font-family:var(--ff-serif);
+  margin:.25rem 0 .35rem;
+  color:#3f3428; font-weight:700; letter-spacing:.2px;
+}
+.parents{ margin:.25rem 0 .5rem; }
+.rel{ margin-top:.75rem; color:#5c5147; }
+
+/* Centre (noms + détails) */
+.center-col{ text-align:center; }
+.names-block{
+  display:flex; flex-wrap:wrap; gap: 14px;
+  align-items:baseline; justify-content:center;
+  margin:.42em 0 .36em;
+}
+.name-fr{
+  font-family:var(--ff-script);
+  font-size: clamp(46px, 7.8vw, 86px);
+  line-height:1.05;
+  color:var(--gold-d);
+  text-shadow: 0 0 0 transparent;
+}
+.and{
+  font-family: var(--ff-serif);
+  font-weight:700;
+  color:#7c5b39;
+  font-size: clamp(20px, 3.1vw, 26px);
+  position: relative; top: .16em;
+}
+.when,.timings,.place{
+  font-family:var(--ff-serif);
+  font-size: 18px;
+  margin: .28rem 0;
+}
+.timings strong{ color:#3f3428; }
+
+/* Ligne hébreu RTL (lieu) premium */
+.place.rtl{
+  direction: rtl; text-align:center;
+  letter-spacing: .03em; word-spacing:.12em;
+}
+
+/* Grands-parents : puces dorées élégantes */
+.grandparents{ list-style:none; margin:.38rem 0 .65rem 0; padding:0; }
+.grandparents li{
+  position:relative; padding-left:16px; margin:.22rem 0;
+}
+.grandparents li::before{
+  content:""; position:absolute; left:0; top:.72em; transform:translateY(-50%);
+  width:5px; height:5px; border-radius:50%;
+  background:linear-gradient(180deg,#d7b289,#b18149);
+  box-shadow:0 0 0 1px rgba(177,129,73,.28);
+}
+
+/* Pensée particulière */
+.dedic{ margin-top:.6rem; font-size:17px; color:#5c5147; }
+
+/* ---------- Boutons évènement ---------- */
+.btn-event{
+  display:flex; justify-content:center; align-items:center;
+  flex-wrap:wrap; gap:12px; margin-top:10px;
+}
+.btn-houppa{
+  display:inline-flex; align-items:center; gap:8px;
+  padding: 12px 22px;
+  font-weight: 800; font-size: 1rem;
+  color:#fff; border-radius: 30px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.10);
+  transition: transform .15s ease, filter .2s ease, background .2s ease;
+  will-change: transform, filter;
+}
+.btn-houppa:hover{ transform: translateY(-1px); filter: saturate(1.05); }
+
+.calendar-button{ background: var(--primary); border:2px solid var(--primary); }
+.calendar-button:hover{ background: var(--primary-d); }
+.waze-button{  background: var(--primary); border:2px solid var(--primary); }
+.waze-button:hover{  background: var(--primary-d); }
+.moovit-button{ background:#F76100; border:2px solid #F76100; }
+.moovit-button:hover{ background:#f37019; }
+
+/* Par défaut desktop : calendar visible ; ajustements mobile plus bas */
+.calendar-button{ display:inline-flex; }
+.moovit-button{ display:inline-flex; }
+
+/* ---------- Ornements optionnels (si tu ajoutes les <img class="orn ...">) ---------- */
+.orn{
+  position:absolute; z-index:0; opacity:.18; filter:grayscale(100%);
+  width: 140px; height:auto; pointer-events:none;
+}
+.o-tl{ top:34px; left:34px; }
+.o-tr{ top:34px; right:34px; transform: scaleX(-1); }
+.o-bl{ bottom:34px; left:34px; transform: scaleY(-1); }
+.o-br{ bottom:34px; right:34px; transform: scale(-1,-1); }
+@media (max-width: 992px){
+  .orn{ width: 100px; }
+}
+
+/* ==================== RESPONSIVE FIN & MICRO-AJUSTEMENTS ==================== */
+
+/* ≥1400 : confort XL */
+@media (min-width: 1400px){
+  .name-fr{ font-size: clamp(58px, 6.8vw, 94px); }
+  .when,.timings,.place{ font-size:19px; }
+}
+
+/* ≤1200 : gap réduit */
+@media (max-width: 1200px){
+  .paper{ padding: 96px 16px 110px; }
+  .paper-watermark{ top: 210px; width: min(180px, 26vw); }
+}
+
+/* ≤992 : colonne unique + titres centrés */
+@media (max-width: 992px){
+  .paper{ padding: 88px 14px 96px; }
+  .script-title{ font-size: clamp(28px, 6.4vw, 52px); }
+  .columns{ text-align: left; }
+  .col h3{ margin-top: .4rem; }
+  .center-col{ text-align: center; }
+  .btn-event{ gap:10px; }
+  .calendar-button, .moovit-button{ display: inline-flex; }
+}
+
+/* ≤880 : confort tablette portrait */
+@media (max-width: 880px){
+  .name-fr{ font-size: clamp(42px, 8.2vw, 72px); }
+  .and{ font-size: clamp(18px, 3.4vw, 24px); top:.12em; }
+  .when,.timings,.place{ font-size:17px; }
+}
+
+/* ≤768 : mobile large */
+@media (max-width: 768px){
+  .paper{ padding: 82px 12px 90px; }
+  .middle-logo{ width: 110px; }
+  .arc{ font-size: clamp(18px, 3.8vw, 26px); }
+  .parents{ font-size: 16px; }
+  .grandparents li{ margin: .18rem 0; }
+  .btn-houppa{ font-size: .95rem; padding: 10px 18px; }
+}
+
+/* ≤560 : mobiles compacts */
+@media (max-width: 560px){
+  .arc{ font-size: 1.2rem; }
+  .script-title{ font-size: 1.55rem; }
+  .name-fr{ font-size: 46px; }
+  .when,.timings,.place{ font-size: 16px; }
+  .btn-event{ width: 100%; }
+  .btn-houppa{ width: auto; }
+}
+
+/* ≤420 : très petits écrans */
+@media (max-width: 420px){
+  .name-fr{ font-size: 42px; }
+  .and{ font-size: 18px; }
+  .parents, .col, .when, .timings, .place{ font-size: 15px; }
+  .btn-houppa{ font-size: .9rem; padding: 9px 16px; }
+}
+
+/* ==================== STATES RTL / LTR (sélecteur langue) ==================== */
+
+html[data-lang="he"], body[data-lang="he"]
+body[data-lang="he"] #navbar{ font-family: "Noto Serif Hebrew", serif; }
+body[data-lang="he"] .parents,
+body[data-lang="he"] .when,
+body[data-lang="he"] .timings,
+body[data-lang="he"] .place{ font-family: "Noto Serif Hebrew", serif; }
+
+/* ==================== IMPRESSION (si on imprime la carte) ==================== */
+
+@media print {
+  .paper{ padding:40px 24px; }
+  .btn-event, #navbar, #scroll-progress, #musicToggle, #scrollToTop{ display:none !important; }
+  .paper-watermark{ opacity:.07; }
+}
+/* =======================================================================
+   PARTIE 3/3 — RSVP + FOOTER + RESPONSIVE EXTRA
+   - Carte formulaire avec champs, selects, radios/checkbox custom
+   - États : focus/hover/disabled/error/success, messages d’aide
+   - Hints dynamiques + transitions hauteur
+   - Compat. auto-fill, mobile keyboards, RTL partiel
+   - Footer soigné
+   - Breakpoints supplémentaires (1140/1040/880/640/380)
+   ======================================================================= */
+
+/* ============================ SECTION RSVP ============================ */
+
+.rsvp{
+  position: relative;
+  padding: 110px 16px 120px;
+  background:
+    linear-gradient(135deg, rgba(193,173,151,.95), rgba(217,200,178,.85), rgba(237,227,214,.78)),
+    radial-gradient(140% 80% at 50% -10%, rgba(255,255,255,.25), rgba(255,255,255,0) 70%);
+  overflow: hidden;
+}
+
+.form-container{
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid #efe6d9;
+  border-radius: 20px;
+  box-shadow: 0 18px 60px rgba(0,0,0,.10);
+  padding: 40px 28px 32px;
+  text-align: center;
+}
+
+.rsvp h2{
+  font-family: var(--ff-serif);
+  font-weight: 700;
+  font-size: clamp(26px, 3.2vw, 34px);
+  color: var(--primary);
+  margin: 0 0 22px;
+  letter-spacing: .2px;
+}
+
+/* ---- Champs ---- */
+
+#formulaire form{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.input-name{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 640px){
+  .input-name{ grid-template-columns: 1fr; }
+}
+
+#formulaire form input,
+#formulaire form select,
+#formulaire form textarea{
+  width: 100%;
+  border: 1px solid #e6dccb;
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px 14px;
+  font-size: 16px;
+  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+/* Placeholders + autofill */
+::placeholder{ color: #a79d90; }
+input:-webkit-autofill,
+select:-webkit-autofill,
+textarea:-webkit-autofill{
+  -webkit-text-fill-color: #2b2b2b;
+  -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Focus visibles et hover */
+#formulaire form input:hover,
+#formulaire form select:hover,
+#formulaire form textarea:hover{
+  border-color: var(--primary);
+}
+#formulaire form input:focus,
+#formulaire form select:focus,
+#formulaire form textarea:focus{
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(196,154,108,.20);
+}
+
+/* Désactivés / readonly */
+#formulaire form input:disabled,
+#formulaire form select:disabled,
+#formulaire form textarea:disabled{
+  background: #f8f4ef;
+  color: #9a9186;
+  cursor: not-allowed;
+}
+
+/* Textarea */
+#formulaire form textarea{
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* Select wrapper (chevron) */
+.select-wrapper{ position: relative; }
+.select-wrapper::after{
+  content: "▾";
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9b9286;
+  font-size: .9rem;
+  pointer-events: none;
+}
+#formulaire form select{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 38px;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* Nombre de personnes + hints révèlent en transition */
+#nombre-wrapper{
+  transition: max-height .3s ease, opacity .3s ease, margin .3s ease;
+  max-height: 260px;
+  opacity: 1;
+}
+#nombre-wrapper.hidden{
+  max-height: 0;
+  opacity: 0;
+  margin: 0 !important;
+  overflow: hidden;
+}
+
+/* Hints & messages */
+.form-hint{
+  font-size: .88rem;
+  color: #777;
+  margin: -6px 0 10px;
+  display: block;
+}
+
+/* ---- Radios navette (Assaha) ---- */
+
+.assaha{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  text-align: left;
+  margin-top: 4px;
+}
+.assaha label{ font-weight: 600; color: #3e352c; }
+.radio-group{
+  display: inline-flex;
+  gap: 14px;
+  align-items: center;
+}
+
+/* Radios custom */
+.radio-group input[type="radio"]{
+  appearance: none;
+  width: 18px; height: 18px;
+  border: 2px solid #cdbba4;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  background: #fff;
+  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.radio-group input[type="radio"]::before{
+  content: "";
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform .15s ease;
+  background: var(--primary);
+}
+.radio-group input[type="radio"]:checked{
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(193,173,151,.22);
+}
+.radio-group input[type="radio"]:checked::before{ transform: scale(1); }
+
+/* Ville navette affichée si Oui */
+#villeAssahaWrapper{
+  margin-top: 6px;
+  transition: max-height .3s ease, opacity .3s ease, margin .3s ease;
+  max-height: 140px;
+}
+#villeAssahaWrapper.hidden{
+  max-height: 0;
+  opacity: 0;
+  margin: 0 !important;
+  overflow: hidden;
+}
+
+/* ---- Bouton submit ---- */
+
+.submit-button{
+  background: var(--primary);
+  border: none;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: .2px;
+  border-radius: 30px;
+  padding: 12px 22px;
+  box-shadow: 0 10px 22px rgba(0,0,0,.10);
+  transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
+}
+.submit-button:hover{
+  background: var(--primary-d);
+  transform: translateY(-1px);
+  box-shadow: 0 18px 36px rgba(0,0,0,.12);
+}
+.submit-button:disabled{
+  background: #cdbba7;
+  cursor: not-allowed;
+}
+
+/* ---- États succès/erreur ---- */
+
+.message{
+  position: relative;
+  padding: .9rem 1.15rem;
+  border-radius: 10px;
+  margin-top: 10px;
+  text-align: left;
+}
+.success-message{
+  color: #155724;
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+}
+#error-message{
+  font-size: .95rem;
+}
+
+/* Champs en erreur (si tu ajoutes .is-invalid côté JS) */
+.is-invalid{
+  border-color: #d64545 !important;
+  box-shadow: 0 0 0 3px rgba(214,69,69,.18) !important;
+}
+.invalid-hint{
+  color: #a33434;
+  font-size: .86rem;
+  margin-top: -6px;
+}
+
+/* ============================ FOOTER ============================ */
+
+.site-footer.footer-invitation{
+  background: #fdf9f3;
+  border-top: 1px solid #e3d4c0;
+  box-shadow: inset 0 1px 0 #e3d4c0;
+  color: #6b5b4a;
+  padding: 24px 16px;
+  text-align: center;
+}
+.footer-content p{ margin: 8px 0; line-height: 1.6; }
+.footer-invitation a{
+  color: #b8996e;
+  font-weight: 700;
+}
+.footer-invitation a:hover{ text-decoration: underline; }
+
+/* ============================ RESPONSIVE EXTRA ============================ */
+
+/* 1140 — confort desktop medium */
+@media (max-width:1140px){
+  .form-container{ max-width: 620px; }
+}
+
+/* 1040 — tablette large */
+@media (max-width:1040px){
+  .form-container{ padding: 36px 24px; }
+  .rsvp{ padding: 96px 14px 108px; }
+}
+
+/* 880 — tablette portrait */
+@media (max-width:880px){
+  .rsvp h2{ font-size: clamp(24px, 3.8vw, 30px); }
+  #formulaire form input,
+  #formulaire form select,
+  #formulaire form textarea{
+    font-size: 15.5px;
+    padding: 11px 13px;
+  }
+}
+
+/* 640 — mobile large */
+@media (max-width:640px){
+  .form-container{ border-radius: 16px; }
+  .radio-group{ gap: 12px; }
+  .submit-button{ padding: 11px 20px; }
+}
+
+/* 520 — mobile classique (déjà utilisé dans P1/P2) */
+
+/* 440 — petits mobiles */
+@media (max-width:440px){
+  .form-container{ padding: 28px 18px; }
+  .rsvp{ padding: 84px 10px 94px; }
+  .rsvp h2{ font-size: 20px; }
+  .submit-button{ padding: 10px 18px; font-size: .98rem; }
+}
+
+/* 380 — très petits écrans */
+@media (max-width:380px){
+  #formulaire form input,
+  #formulaire form select,
+  #formulaire form textarea{ font-size: 15px; }
+  .radio-group input[type="radio"]{ width: 16px; height: 16px; }
+  .radio-group input[type="radio"]::before{ width: 9px; height: 9px; }
+}
+
+/* ============================ RTL FIN (si bascule complète en HE) ============================ */
+
+body[data-lang="he"] #formulaire h2,
+body[data-lang="he"] #formulaire form,
+body[data-lang="he"] .form-hint{
+  font-family: "Noto Serif Hebrew", serif;
+}
+body[data-lang="he"] #formulaire input,
+body[data-lang="he"] #formulaire textarea{
+  direction: rtl;
+}
+
+/* ============================ PRINT ============================ */
+
+@media print{
+  .rsvp{ padding: 40px 0; background: #fff; }
+  .form-container{ border: none; box-shadow: none; }
+  #scrollToTop, #musicToggle{ display: none !important; }
+}
+/* =========================
+   HOUPPA & SOIRÉE — PROSE
+   Overrides pour mise en page style faire-part
+   ========================= */
+
+/* Fond pleine page avec card.jpg + voile lisibilité */
+#houppa-soiree.paper{
+  position:relative; isolation:isolate;
+  padding: clamp(64px,8vw,120px) 18px;
+  background: url('bg-floral.jpeg') center/cover no-repeat fixed;
+}
+#houppa-soiree.paper::before{
+  content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  /* léger voile + vignette claire */
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.58),rgba(255,255,255,.74) 38%,rgba(255,255,255,.62) 100%),
+    radial-gradient(120% 100% at 50% 0,rgba(255,255,255,.35),rgba(255,255,255,0));
+}
+#houppa-soiree .paper-bg{ display:none } /* on n’utilise pas l’img de fond interne */
+
+/* Filigrane logo centré et discret */
+#houppa-soiree .paper-watermark{
+  position:absolute; left:50%; top:180px; transform:translateX(-50%);
+  width:min(220px,32vw); opacity:.07; filter:grayscale(100%);
+  z-index:0; pointer-events:none;
+}
+
+/* Conteneur du texte */
+#houppa-soiree .paper-inner{ position:relative; z-index:1; max-width:1100px; margin:0 auto; }
+
+/* Titre arc hébreu */
+#houppa-soiree #arc-title{
+  text-align:center; color: var(--gold-strong, #B18149);
+  font-family: "Playfair Display", serif; font-weight:700; letter-spacing:.03em;
+  font-size: clamp(18px,2.6vw,28px);
+  margin: 0 0 6px;
+}
+
+/* “Houppa & Soirée” + filet doré */
+#houppa-soiree #houppa_title{
+  text-align:center; color: var(--gold-strong, #B18149);
+  font-family:"Playfair Display", serif; font-weight:700;
+  font-size: clamp(30px,5.5vw,56px); margin: 6px 0 10px;
+}
+#houppa-soiree .hairline{
+  width: 64px; height: 3px; border-radius:2px; margin: 10px auto 24px;
+  background: var(--gold-strong, #B18149);
+}
+
+/* Bloc parents alignés gauche/droite (se replie au centre sur mobile) */
+.parents-duo{
+  display:flex; justify-content:space-between; gap:24px;
+  max-width:980px; margin: 0 auto 8px; padding: 0 6px;
+  font-family:"Playfair Display", serif; font-size: clamp(18px,2.2vw,26px); line-height:1.45;
+  color:#3b342e;
+}
+.parents-duo span{ white-space:nowrap }
+@media (max-width:760px){
+  .parents-duo{ flex-direction:column; align-items:center; gap:4px; text-align:center }
+}
+
+/* Paragraphe de prose */
+#houppa-soiree .hp{
+  font-family: "Cardo", serif;
+  font-size: clamp(17px,2.1vw,22px);
+  line-height: 1.65; color:#4a4038;
+  text-align:center;
+}
+
+/* NOMS — calligraphie + & en serif */
+#houppa-soiree .names-block{
+  display:flex; align-items:baseline; justify-content:center; gap:14px; flex-wrap:wrap;
+}
+#houppa-soiree .names-block .name-fr{
+  font-family: "Playfair Display", serif; font-style: italic; font-weight:700;
+  color: var(--gold-strong, #B18149);
+  font-size: clamp(42px,7.5vw,80px); line-height: 1.05;
+  text-shadow: 0 2px 0 rgba(255,255,255,.4);
+}
+#houppa-soiree .names-block .and{
+  font-family:"Playfair Display", serif; font-weight:700; color:#7d5d3a;
+  font-size: clamp(20px,3.8vw,34px);
+}
+#houppa-soiree .names-block .he-only{
+  font-size: clamp(18px,3.2vw,26px); color:#7d5d3a;
+}
+
+/* Lignes date / lieu / horaires */
+#houppa-soiree .when{ margin:.45rem 0 .2rem; color:#3d3832 }
+#houppa-soiree .timings{ margin:.35rem 0; font-style:italic }
+#houppa-soiree .place{ margin:.35rem 0; direction:rtl; }
+
+/* Boutons événement (Waze / Calendrier / Moovit) */
+#houppa-soiree .btn-event{
+  display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:16px;
+}
+#houppa-soiree .btn-houppa{
+  display:inline-flex; align-items:center; gap:8px; border-radius:999px;
+  padding:11px 20px; font-weight:700; text-decoration:none; color:#fff !important;
+  box-shadow:0 6px 18px rgba(0,0,0,.08); transition:.18s transform ease, .18s box-shadow ease;
+}
+#houppa-soiree .btn-houppa:hover{ transform:translateY(-1px); box-shadow:0 12px 28px rgba(0,0,0,.12) }
+#houppa-soiree .calendar-button{ background: var(--gold, #C49A6C); border:1px solid var(--gold-strong,#B18149) }
+#houppa-soiree .waze-button{ background: var(--gold, #C49A6C); border:1px solid var(--gold-strong,#B18149)}
+#houppa-soiree .moovit-button{ background:#F76100; border:1px solid #F76100 }
+
+/* Logo central un peu plus compact sur mobile */
+#houppa-soiree .middle-logo{ width:min(160px,26vw); display:block; margin:6px auto 2px }
+
+/* Petites corrections de rythme */
+#houppa-soiree .hp + .hp{ margin-top:.25rem }
+#houppa-soiree .dedic{ color:#5b5249 }
+/* ============================
+   PALETTE OR / IVOIRE
+   ============================ */
+   :root {
+    --primary-color: #B78C54;   /* Doré élégant */
+    --primary-dark: #7d5d3a;    /* Brun chaud */
+    --text-main: #2b2b2b;
+    --text-muted: #6a625a;
+    --bg-light: #FAF6F2;
+  }
+  
+  /* === Textes importants === */
+  .accent,
+  .names-calligraphy .script,
+  .names-calligraphy .under,
+  .hp.when strong,
+  .hp.timings .accent {
+    color: var(--primary-color);
+  }
+  
+  /* === Compteur élégant === */
+  .compteur.compteur-elegant .compteur-bloc {
+    background: rgba(183,140,84,.10);
+    border: 2px solid rgba(183,140,84,.55);
+    border-radius: 14px;
+    padding: 12px 18px;
+    min-width: 80px;
+    text-align: center;
+    box-shadow: 0 6px 16px rgba(0,0,0,.08);
+  }
+  
+  .compteur.compteur-elegant .nombre {
+    font-family: "Great Vibes", cursive;
+    font-size: clamp(22px, 4vw, 40px);
+    line-height: 1;
+    color: var(--primary-color);
+    margin-bottom: 6px;
+  }
+  
+  .compteur.compteur-elegant .label {
+    font-family: "Playfair Display", serif;
+    font-variant: small-caps;
+    letter-spacing: .06em;
+    color: var(--primary-dark);
+    font-size: 13px;
+  }
+  
+  /* === Bloc prénoms === */
+  .names-calligraphy .script {
+    font-size: clamp(46px, 8vw, 110px);
+    text-shadow: 0 1px 1px rgba(255,255,255,.6);
+  }
+  .names-calligraphy .under {
+    font-size: clamp(14px, 1.9vw, 22px);
+    color: var(--primary-dark);
+  }
+  
+  /* === Texte hébreu bas === */
+  .hebrew-bottom {
+    font-family: "Noto Serif Hebrew", serif;
+    font-size: clamp(20px,3vw,30px);
+    color: var(--primary-dark);
+    margin: .6rem 0 .2rem;
+  }
+  
+  /* === Dédicace plus discrète === */
+  .dedic.small {
+    font-size: clamp(13px,1.6vw,16px);
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  
+  /* === Général === */
+  body {
+    background: var(--bg-light);
+    color: var(--text-main);
+  }
+  
+
+  /* === Fond "floral doré" (image à coins, centre clair) === */
+.paper { background: none; } /* on laisse l'image gérer tout le fond */
+
+.paper-bg{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;               /* couvre l'écran sans étirer */
+  object-position:center;         /* garde le centre clair */
+  filter:contrast(1.02) saturate(1.02) brightness(1.02);
+  z-index:0;
+}
+
+/* voile doux pour la lisibilité du texte (centre très léger) */
+.paper::before{
+  content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  /* dégradé très subtil : bords quasi transparents, centre juste un voile */
+  background:
+    radial-gradient(60% 45% at 50% 40%, rgba(255,255,255,.55), rgba(255,255,255,.08) 70%),
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.22));
+}
+
+/* le contenu reste au-dessus */
+.paper-inner{ position:relative; z-index:1; }
+
+/* mobile : un poil plus de voile pour compenser la densité visuelle */
+@media (max-width: 700px){
+  .paper::before{
+    background:
+      radial-gradient(65% 55% at 50% 35%, rgba(255,255,255,.65), rgba(255,255,255,.10) 75%),
+      linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.28));
+  }
+}
+
+/* ---------- Grille parents / grands-parents ---------- */
+.parents-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px clamp(18px, 4vw, 60px);
+  max-width: 1100px;
+  margin: 0 auto 10px;
+  font-family: 'Playfair Display', serif;
+  color:#4b3b2a;
+}
+.parents-grid .col{ display:flex; flex-direction:column; gap:10px; }
+.parents-grid .line{
+  font-size: clamp(16px, 2vw, 22px);
+  line-height: 1.35;
+}
+.parents-grid .line strong{
+  color:#7d5d3a;
+  font-weight: 600;
+}
+
+/* Mobile : colonnes l’une sous l’autre */
+@media (max-width: 820px){
+  .parents-grid{ grid-template-columns: 1fr; gap: 14px; text-align:center; }
+}
+
+/* ---------- Waze : même style que le bouton agenda ---------- */
+.btn-houppa.waze-button{
+  background: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  color: #fff !important;
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform .2s ease, background-color .25s ease, box-shadow .25s ease;
+}
+.btn-houppa.waze-button:hover{
+  background:#9a6e3f;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0,0,0,.12);
+}
+
+/* ---------- On cache le bouton son s’il était encore dans le HTML ---------- */
+#musicToggle{ display:none !important; }
+
+
+.parents-grid {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  max-width: 1000px;
+  margin: 1.2rem auto;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 400; /* <-- plus léger */
+  font-size: clamp(17px, 2vw, 22px);
+  line-height: 1.5;
+  color: #4b3b2c;
+}
+
+.parents-grid .col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.parents-grid .line {
+  letter-spacing: 0.3px;
+  transition: color 0.3s ease;
+}
+
+.parents-grid .line:hover {
+  color: var(--primary-color);
+}
+
+@media (max-width: 700px) {
+  .parents-grid {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.invitation-text {
+  font-family: 'Cardo', serif;
+  font-size: clamp(17px, 2vw, 22px);
+  color: #3f3428;
+  line-height: 1.6;
+}
+
+.invitation-text strong {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.invitation-text .accent {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.parents-grid {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  max-width: 1000px;
+  margin: 1.5rem auto 0;
+  text-align: center;
+  flex-wrap: wrap;
+}
+
+.parents-grid .col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.parents-grid .line {
+  font-family: 'Cardo', serif;
+  font-size: clamp(17px, 2vw, 22px);
+  color: #3f3428;
+  line-height: 1.6;
+}
+
+.invitation-text {
+  font-family: 'Cardo', serif;
+  font-size: clamp(17px, 2vw, 22px);
+  color: #3f3428;
+  line-height: 1.6;
+}
+
+.invitation-text strong {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.invitation-text .accent {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.paper #houppa_title.script-title {
+  font-family: 'Playfair Display', serif !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  color: var(--primary-color) !important;
+  font-size: clamp(44px, 2.2vw, 80px) !important;
+  text-align: center !important;
+  margin-top: 0.6rem !important;
+  margin-bottom: 0.9rem !important;
+  line-height: 1.05 !important;
+  text-shadow: 0 1px 1px rgba(255,255,255,0.3) !important;
+}
+
+
+/* ===== HE MODE (hébreu élégant) ===== */
+:root { --he-font: "Noto Serif Hebrew", serif; }
+
+body.he-mode { direction: rtl; }
+#houppa-soiree.he-mode { direction: rtl; text-align: center; }
+
+/* Titres et textes de la carte en hébreu */
+#houppa-soiree.he-mode .script-title,
+#houppa-soiree.he-mode .hp,
+#houppa-soiree.he-mode .parents-grid .line,
+#houppa-soiree.he-mode .invitation-text,
+#houppa-soiree.he-mode .timings,
+#houppa-soiree.he-mode .place {
+  font-family: var(--he-font);
+}
+
+/* Titre "Houppa & Soirée" → plus fin en hébreu */
+#houppa-soiree.he-mode #houppa_title.script-title {
+  font-weight: 500;           /* plus fin */
+  letter-spacing: 0.02em;     /* plus serré */
+  font-size: clamp(18px, 2vw, 24px);
+}
+
+/* Noms calligraphiés en hébreu : gros et élégants */
+#houppa-soiree.he-mode .names-calligraphy .script {
+  font-family: var(--he-font);
+  font-weight: 700;
+  font-size: clamp(40px, 7vw, 90px);
+  line-height: 1;
+}
+#houppa-soiree.he-mode .names-calligraphy .amp { display: none; } /* pas de & en he */
+#houppa-soiree.he-mode .names-calligraphy .under { display: none; } /* on enlève le petit sous-titre latin */
+
+#houppa-soiree.he-mode .parents-grid { gap: 10px; }
+#houppa-soiree.he-mode .parents-grid .col .line { font-weight: 500; }
+
+/* Boutons en hébreu : même style, juste RTL */
+#houppa-soiree.he-mode .btn-event { direction: rtl; }
+
+/* ===== mode hébreu étendu ===== */
+body.he-mode { direction: rtl; }
+#houppa-soiree.he-mode, #formulaire.he-mode { direction: rtl; text-align: center; }
+
+body.he-mode input, 
+body.he-mode select, 
+body.he-mode textarea { direction: rtl; text-align: right; }
+
+/* typo hébreu élégante sur la carte + RSVP */
+:root { --he-font: "Noto Serif Hebrew", serif; }
+#houppa-soiree.he-mode .hp,
+#houppa-soiree.he-mode .invitation-text,
+#houppa-soiree.he-mode .parents-grid .line,
+#houppa-soiree.he-mode .timings,
+#houppa-soiree.he-mode .place,
+#houppa-soiree.he-mode #houppa_title,
+#formulaire.he-mode h2,
+#formulaire.he-mode label,
+#formulaire.he-mode .form-hint,
+#formulaire.he-mode .submit-button,
+#formulaire.he-mode input,
+#formulaire.he-mode select,
+#formulaire.he-mode textarea {
+  font-family: var(--he-font);
+}
+
+/* H1 (HERO) noms en hébreu élégant */
+body.he-mode #accueil .names { font-family: var(--he-font)!important; }
+
+#arc-title {
+  letter-spacing: 9px; /* espace horizontal entre les lettres */
+  font-weight: 500; /* garde une belle finesse */
+  direction: rtl; /* pour être sûr que l’hébreu s’aligne bien */
+}
+
+/* ====== Prénoms calligraphiés — centre de carte ====== */
+.names-calligraphy{
+  display:flex; align-items:flex-end; justify-content:center;
+  gap: clamp(14px, 2.5vw, 28px);
+  margin: clamp(12px, 2.2vw, 24px) auto clamp(10px, 1.8vw, 18px);
+  text-align:center; flex-wrap:wrap;
+}
+
+.names-calligraphy .script{
+  font-family: "Great Vibes", cursive;
+  font-size: clamp(44px, 9vw, 120px);
+  line-height: .9;
+  letter-spacing: clamp(0.2px, 0.1vw, 0.8px);
+  color: var(--primary-color);
+  text-shadow: 0 1px 1px rgba(255,255,255,.55);
+  display:inline-flex; flex-direction:column; align-items:center;
+}
+
+.names-calligraphy .amp{
+  font-family: "Playfair Display", serif;
+  font-weight: 600;
+  font-size: clamp(22px, 4vw, 40px);
+  line-height: 1;
+  margin: 0 .15em .2em;
+  color:#7d5d3a;
+  letter-spacing: 0.02em;
+}
+
+.names-calligraphy .under{
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 600;
+  font-size: clamp(14px, 2.5vw, 22px);
+  line-height: 1.1;
+  margin-top: clamp(2px, .4vw, 6px);
+  color:#7d5d3a;
+  letter-spacing: 0.02em;
+}
+
+/* Mobile : resserrer un chouïa et éviter que ça “pète” la ligne */
+@media (max-width: 560px){
+  .names-calligraphy{
+    gap: clamp(10px, 3vw, 16px);
+  }
+  .names-calligraphy .script{
+    font-size: clamp(40px, 11.5vw, 78px);
+    letter-spacing: 0.3px;
+  }
+  .names-calligraphy .amp{
+    font-size: clamp(20px, 6.5vw, 28px);
+    margin-bottom: .15em;
+  }
+}
+
+/* Mode hébreu : utiliser un tiret fin, resserrer légèrement la lettre */
+.he-mode .names-calligraphy .amp{
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.he-mode .names-calligraphy .script{
+  letter-spacing: 0.1px; /* un peu plus serré en HE */
+}
+
+/* Petit fondu lors du switch de langue */
+.lang-fade {
+  transition: opacity .25s ease;
+  opacity: .25;
+}
+
+/* ====== Noms calligraphiés (centre de carte) ====== */
+.names-calligraphy{
+  display:flex; align-items:flex-end; justify-content:center;
+  gap: clamp(12px, 2.2vw, 26px);
+  margin: clamp(12px, 2.2vw, 24px) auto clamp(8px, 1.6vw, 16px);
+  text-align:center; flex-wrap:wrap;
+}
+
+.names-calligraphy .script{
+  font-family: "Great Vibes", cursive;
+  font-size: clamp(44px, 9vw, 118px);
+  line-height: .9;
+  letter-spacing: clamp(0.2px, 0.1vw, 0.8px);
+  color: var(--primary-color);
+  text-shadow: 0 1px 1px rgba(255,255,255,.55);
+  display:inline-flex; flex-direction:column; align-items:center;
+}
+
+.names-calligraphy .amp{
+  font-family: "Playfair Display", serif;
+  font-weight: 600;
+  font-size: clamp(22px, 4vw, 40px);
+  line-height: 1;
+  margin: 0 .15em .18em;
+  color:#7d5d3a;
+  letter-spacing: 0.02em;
+}
+
+.names-calligraphy .under{
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 600;
+  font-size: clamp(14px, 2.5vw, 22px);
+  line-height: 1.1;
+  margin-top: clamp(2px, .4vw, 6px);
+  color:#7d5d3a;
+  letter-spacing: 0.02em;
+}
+
+/* mobile: éviter que ça “pète” les lignes */
+@media (max-width: 560px){
+  .names-calligraphy{ gap: clamp(8px, 3vw, 14px); }
+  .names-calligraphy .script{ font-size: clamp(40px, 11.5vw, 78px); }
+  .names-calligraphy .amp{ font-size: clamp(18px, 6.5vw, 28px); }
+}
+
+/* Afficher les sous-titres HÉBREU seulement en HE */
+.he-only{ display:none; }
+.he-mode .he-only{ display:inline; }
+
+/* En HE, utiliser un séparateur type tiret fin (le JS posera le bon char) */
+.he-mode .names-calligraphy .amp{
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* Noms au centre - style par défaut (FR) déjà OK avec Great Vibes
+   On n'y touche pas. On surcharge seulement quand la langue = he. */
+
+/* Container commun (si pas déjà défini) */
+.names-inline{
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap: clamp(8px, 2vw, 18px);
+  flex-wrap:wrap;
+  margin: .35rem 0 .15rem;
+  text-align:center;
+}
+
+/* FR déjà configuré chez toi : .names-inline .script = Great Vibes */
+/* HE — look plus fin et typé hébreu */
+html[data-lang="he"] .names-inline .script{
+  font-family: "Miriam Libre", "Noto Serif Hebrew", serif;
+  font-weight: 400;                 /* plus fin */
+  font-size: clamp(42px, 8.4vw, 120px);
+  line-height: .92;
+  letter-spacing: 0.01em;           /* resserrer légèrement sans coller */
+  color: var(--primary-color);
+  text-shadow: none;                /* pas d’ombre pour une finesse nette */
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "liga" 1, "kern" 1;
+}
+
+/* Tiret fin entre les prénoms en HE (un poil plus petit) */
+html[data-lang="he"] .names-inline .amp{
+  font-family: "Miriam Libre", "Noto Serif Hebrew", serif;
+  font-weight: 400;
+  font-size: clamp(22px, 4.2vw, 48px);
+  transform: translateY(-0.12em);
+  opacity: .9;
+}
+
+/* Si tu affiches des sous-légendes sous les prénoms (underLeft/underRight), affine aussi */
+html[data-lang="he"] .names-inline .under{
+  font-family: "Miriam Libre", "Noto Serif Hebrew", serif;
+  font-weight: 400;
+  font-size: clamp(14px, 2.4vw, 22px);
+  letter-spacing: 0.015em;
+  color:#7d5d3a;
+  margin-top: -4px;
+}
+
+/* Petites optimisations mobile */
+@media (max-width: 560px){
+  html[data-lang="he"] .names-inline{
+    gap: clamp(6px, 2.5vw, 12px);
+  }
+  html[data-lang="he"] .names-inline .script{
+    font-size: clamp(36px, 12vw, 96px);
+  }
+}
+
+/* --- Version affinée hébreu pour נתנאל & אורה מרים --- */
+html[data-lang="he"] .names-inline .script {
+  font-family: "Miriam Libre", "Noto Serif Hebrew", serif;
+  font-weight: 300; /* plus fin */
+  font-size: clamp(42px, 8vw, 118px);
+  line-height: 0.9;
+  color: var(--primary-color);
+  letter-spacing: 0.02em;
+  text-shadow: none;
+}
+
+/* Affine davantage le rendu typographique (anti-aliasing) */
+html[data-lang="he"] .names-inline .script span {
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+/* נתנאל (Natanel) = taille normale */
+html[data-lang="he"] .names-inline .script .he-natanel {
+  font-weight: 300;
+}
+
+/* אורה = un peu plus grand, Mרים = légèrement plus petit */
+html[data-lang="he"] .names-inline .script .he-ora {
+  font-weight: 300;
+  font-size: 1em;
+}
+html[data-lang="he"] .names-inline .script .he-miriam {
+  font-weight: 300;
+  font-size: 0.75em; /* plus petit et plus fin */
+  margin-right: 0.1em;
+  opacity: 0.95;
+}
+
+/* Tiret discret entre les deux prénoms */
+html[data-lang="he"] .names-inline .amp {
+  font-family: "Miriam Libre", "Noto Serif Hebrew", serif;
+  font-size: clamp(20px, 3.5vw, 42px);
+  font-weight: 300;
+  opacity: 0.9;
+}
+
+/* --- Style hébreu uniquement pour נתנאל & אורה מרים --- */
+html[data-lang="he"] .names-calligraphy .script {
+  font-family: "Noto Serif Hebrew", "Miriam Libre", serif;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  text-shadow: none;
+}
+
+/* Le prénom principal (Natanel / Ora) */
+html[data-lang="he"] .names-calligraphy .script .under.he-only {
+  display: block;
+  font-family: "Noto Serif Hebrew", "Miriam Libre", serif;
+  font-weight: 300;
+  font-size: 0.8em;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  margin-top: 0.1em;
+  opacity: 0.95;
+}
+
+/* Variante pour la kala (אורה מרים) : Miriam plus petite */
+html[data-lang="he"] #namesInlineGroom .under.he-only {
+  display: inline-block;
+  font-size: 0.4em;
+  font-weight: 300;
+  color: var(--primary-color);
+}
+
+html[data-lang="he"] #namesInlineGroom .under.he-only::after {
+  content: " ";
+}
+
+/* Effet fin et élégant sur toute la calligraphie hébreu */
+html[data-lang="he"] .names-calligraphy {
+  direction: rtl;
+  text-align: center;
+}
+
+html[data-lang="he"] .names-calligraphy .name-left,
+html[data-lang="he"] .names-calligraphy .name-right {
+  font-weight: 300;
+  color: var(--primary-color);
+}
+/* ===== Raffinement HÉBREU – noms au centre ===== */
+html[data-lang="he"] .names-calligraphy {
+  direction: rtl;
+  text-align: center;
+}
+
+/* Noms principaux (grands) en hébreu : plus fin + un peu plus petit */
+html[data-lang="he"] .names-calligraphy .script {
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 300;                 /* plus fin */
+  font-size: clamp(44px, 7.0vw, 92px);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-shadow: none;
+  color: var(--primary-color);
+}
+
+/* Séparateur au centre (tiret fin hébreu) */
+html[data-lang="he"] #namesInlineAnd {
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 300;
+  transform: translateY(-0.08em);
+  margin: 0 0.25em;
+}
+
+/* “מרים” plus petit (injecté via JS avec .he-miriam) */
+html[data-lang="he"] #namesInlineGroom .he-miriam {
+  font-size: 0.62em;                /* plus petit que “אורה” */
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  margin-inline-start: .25em;
+  display: inline-block;
+}
+
+/* Sous-lignes hébreu (si tu les affiches) : plus fines */
+html[data-lang="he"] .names-calligraphy .under.he-only {
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 300;
+  font-size: 0.82em;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  opacity: 0.95;
+  margin-top: 0.15em;
+}
+
+/* ===== Raffinement HÉBREU – noms du héros (compte à rebours) ===== */
+html[data-lang="he"] #accueil .names .bride,
+html[data-lang="he"] #accueil .names .groom {
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 400;                  /* plus fin que 700 */
+  font-size: clamp(36px, 8.5vw, 84px); /* légèrement plus petit */
+  letter-spacing: 0.01em;
+}
+
+html[data-lang="he"] #accueil .names .et {
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 300;
+  transform: translateY(-0.06em);
+}
+
+/* ====== HE — Noms au centre : affiner, aligner, & plus petit ====== */
+html[data-lang="he"] .names-calligraphy {
+  direction: rtl;
+  display: flex;
+  justify-content: center;
+  align-items: center;          /* évite le décalage vertical de נתנאל */
+  gap: .25em;
+  text-align: center;
+}
+
+html[data-lang="he"] .names-calligraphy .script {
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 300;
+  font-size: clamp(44px, 7.0vw, 92px);
+  line-height: 1;               /* aligne propre */
+  letter-spacing: .01em;
+  text-shadow: none;
+  color: var(--primary-color);
+}
+
+/* Séparateur au centre : plus petit */
+html[data-lang="he"] #namesInlineAnd {
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 300;
+  font-size: .60em;             /* <-- réduit le “־” (ou “&” si tu testes) */
+  line-height: 1;
+  transform: translateY(-0.06em);
+  margin: 0 .25em;
+}
+
+/* “מרים” réduit (injecté par styleHebrewInlineNames) */
+html[data-lang="he"] #namesInlineGroom .he-miriam {
+  font-size: 0.62em;
+  font-weight: 300;
+  letter-spacing: .02em;
+  margin-inline-start: .25em;
+  display: inline-block;
+}
+
+/* On supprime le doublon “מרים” de la sous-ligne */
+html[data-lang="he"] .names-calligraphy .under.he-only { display: none; }
+
+/* Mobile : encore un peu plus doux */
+@media (max-width: 560px) {
+  html[data-lang="he"] .names-calligraphy .script {
+    font-size: clamp(36px, 10vw, 64px);
+  }
+  html[data-lang="he"] #namesInlineAnd { font-size: .50em; }
+}
+
+/* ====== HE — Héros (compte à rebours) : plus fin et un poil plus petit ====== */
+html[data-lang="he"] #accueil .names .bride,
+html[data-lang="he"] #accueil .names .groom {
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 400;
+  font-size: clamp(32px, 7.5vw, 72px);
+  letter-spacing: .01em;
+}
+html[data-lang="he"] #accueil .names .et {
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 300;
+  transform: translateY(-0.06em);
+}
+
+/* ----- HE : noms au centre, & plus petit, alignement nickel ----- */
+html[data-lang="he"] .names-calligraphy {
+  direction: rtl;
+  display: flex;
+  justify-content: center;
+  align-items: center;     /* aligne נתנאל / אורה */
+  gap: .3em;
+  text-align: center;
+}
+
+html[data-lang="he"] .names-calligraphy .script {
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 300;
+  font-size: clamp(44px, 7.0vw, 92px);
+  line-height: 1;
+  letter-spacing: .01em;
+  text-shadow: none;
+  color: var(--primary-color);
+}
+
+/* le symbole & (au milieu) plus discret */
+html[data-lang="he"] #namesInlineAnd {
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 300;
+  font-size: .55em;         /* <-- plus petit */
+  line-height: 1;
+  transform: translateY(-0.06em);
+  margin: 0 .25em;
+}
+
+/* "מרים" plus petit dans la ligne principale */
+html[data-lang="he"] #namesInlineGroom .he-miriam {
+  font-size: 0.62em;
+  font-weight: 300;
+  letter-spacing: .02em;
+  margin-inline-start: .25em;
+  display: inline-block;
+}
+
+/* supprime la sous-ligne en HE (évite le doublon) */
+html[data-lang="he"] .names-calligraphy .under.he-only { 
+  display: none !important; 
+}
+
+/* Mobile : un peu plus doux */
+@media (max-width: 560px) {
+  html[data-lang="he"] .names-calligraphy .script {
+    font-size: clamp(36px, 10vw, 64px);
+  }
+  html[data-lang="he"] #namesInlineAnd { font-size: .48em; }
+}
+
+/* ----- HE : héros (compteur) un poil plus fin/petit ----- */
+html[data-lang="he"] #accueil .names .bride,
+html[data-lang="he"] #accueil .names .groom {
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 600;
+  font-size: clamp(32px, 7.5vw, 92px);
+  letter-spacing: .01em;
+}
+html[data-lang="he"] #accueil .names .et {
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 300;
+  transform: translateY(-0.06em);
+}
+
+
+/* ====== NOMS — overrides HE uniquement ====== */
+
+/* 1) En hébreu, on ne montre pas les petits sous-titres (les <span class="under he-only">) */
+html[data-lang="he"] .names-calligraphy .under.he-only { display: none !important; }
+
+/* 2) Ligne de noms compacte, une seule ligne */
+html[data-lang="he"] .names-calligraphy {
+  direction: rtl;
+  flex-wrap: nowrap;            /* force une seule ligne */
+  justify-content: center;
+  align-items: baseline;        /* aligne visuellement les baselines */
+  gap: 0.28em;
+  line-height: 1;
+  text-align: center;
+}
+
+/* 3) Style des prénoms hébreu : plus fin + plus petit */
+html[data-lang="he"] .names-calligraphy .script {
+  font-family: "Miriam Libre", "Noto Serif Hebrew", serif; /* tu as déjà importé Miriam Libre */
+  font-weight: 400;                /* plus fin */
+  font-size: clamp(34px, 6.2vw, 68px);  /* plus petit que FR */
+  letter-spacing: 0.01em;
+  color: var(--primary-color);
+  text-shadow: none;               /* look plus propre en HE */
+}
+
+/* 4) Le symbole & un peu plus petit et mieux calé */
+html[data-lang="he"] #namesInlineAnd {
+  font-family: "Miriam Libre", "Noto Serif Hebrew", serif;
+  font-weight: 400;
+  font-size: 0.58em;               /* réduit par rapport aux noms */
+  margin: 0 0.15em 0;
+  transform: translateY(-0.06em);  /* léger ajustement vertical */
+  color: var(--primary-color);
+}
+
+/* 5) Petits ajustements sur le conteneur de droite pour éviter un décalage vertical */
+html[data-lang="he"] .names-calligraphy .name-right {
+  display: inline-flex;
+  flex-direction: row;             /* empêche les colonnes qui décalent */
+  align-items: baseline;
+}
+
+/* 6) Version "dans la carte" si tu utilises la classe .in-card (on garde la même ligne) */
+html[data-lang="he"] .names-calligraphy.in-card .script {
+  font-size: clamp(32px, 5.8vw, 64px);
+}
+
+/* 7) Mobile : on réduit un peu plus pour tenir sur une ligne */
+@media (max-width: 560px) {
+  html[data-lang="he"] .names-calligraphy .script {
+    font-size: clamp(28px, 7.2vw, 56px);
+  }
+  html[data-lang="he"] #namesInlineAnd {
+    font-size: 0.54em;
+  }
+}
+
+/* ====== (optionnel) HERO : prénoms au compteur un peu plus fins en HE ====== */
+@media (max-width: 9999px) {
+  html[data-lang="he"] #accueil .names {
+    font-family: "Miriam Libre", "Noto Serif Hebrew", serif;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+}
+/* ===== HE — prénoms du bloc carte (forcés) ===== */
+html[data-lang="he"] #namesInline { 
+  direction: rtl;
+  flex-wrap: nowrap !important;    /* une seule ligne */
+  white-space: nowrap !important;
+  align-items: baseline;
+  gap: .28em;
+  line-height: 1;
+  text-align: center;
+}
+
+html[data-lang="he"] #namesInline .script {
+  font-family: "Miriam Libre","Noto Serif Hebrew",serif !important;
+  font-weight: 400 !important;                 /* plus fin */
+  font-size: clamp(32px, 5.6vw, 64px) !important; /* plus petit */
+  letter-spacing: .01em;
+  color: var(--primary-color);
+  text-shadow: none !important;
+}
+
+html[data-lang="he"] #namesInlineAnd {
+  font-family: "Miriam Libre","Noto Serif Hebrew",serif !important;
+  font-weight: 400 !important;
+  font-size: 0.56em !important;     /* & plus petit */
+  line-height: 1 !important;
+  margin: 0 .15em 0 !important;
+  transform: translateY(-.06em);    /* petit ajustement vertical */
+  color: var(--primary-color) !important;
+}
+
+/* Masque les sous-lignes hébraïques pour éviter le doublon "מרים" */
+html[data-lang="he"] #namesInline .under.he-only { 
+  display: none !important; 
+}
+
+/* Mobile : on réduit encore un peu pour tenir sur une ligne */
+@media (max-width: 480px) {
+  html[data-lang="he"] #namesInline .script { font-size: clamp(26px, 7.6vw, 48px) !important; }
+  html[data-lang="he"] #namesInlineAnd      { font-size: .52em !important; }
+}
+
+/* ===== HE — H1 du héros au compteur un peu plus fin aussi ===== */
+html[data-lang="he"] #accueil .names {
+  font-family: "Miriam Libre","Noto Serif Hebrew",serif !important;
+  font-weight: 400 !important;
+  letter-spacing: .01em;
+}
+html[data-lang="he"] #accueil .names .et { font-size: .6em !important; }
+/* ===== HE — prénoms AU CENTRE DE LA CARTE uniquement ===== */
+html[data-lang="he"] #namesInline{
+  direction: rtl;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+  align-items: baseline;
+  gap: .28em;
+  line-height: 1;
+}
+
+html[data-lang="he"] #namesInline .script{
+  font-family: "Miriam Libre","Noto Serif Hebrew",serif !important;
+  font-weight: 400 !important;                 /* plus fin */
+  font-size: clamp(32px, 5.6vw, 64px) !important; /* plus petit */
+  letter-spacing: .01em;
+  color: var(--primary-color);
+  text-shadow: none !important;
+}
+
+html[data-lang="he"] #namesInlineAnd{
+  font-family: "Miriam Libre","Noto Serif Hebrew",serif !important;
+  font-weight: 400 !important;
+  font-size: 0.56em !important;                /* & plus petit */
+  line-height: 1 !important;
+  margin: 0 .15em 0 !important;
+  transform: translateY(-.06em);
+  color: var(--primary-color) !important;
+}
+
+/* Evite le doublon “מרים” (les petites sous-lignes) */
+html[data-lang="he"] #namesInline .under.he-only{ display:none !important; }
+
+@media (max-width:480px){
+  html[data-lang="he"] #namesInline .script{ font-size: clamp(26px,7.6vw,48px) !important; }
+  html[data-lang="he"] #namesInlineAnd{ font-size:.52em !important; }
+}
+
+/* RSVP — enfants */
+.kids-list{ display:grid; gap:8px; margin-top:8px; }
+.kid-row{ display:grid; grid-template-columns: 1fr 1fr 90px; gap:8px; }
+.kid-row input{ width:100%; }
+html[dir="rtl"] .kid-row{ direction: rtl; }
+@media (max-width:520px){
+  .kid-row{ grid-template-columns: 1fr 1fr; }
+  .kid-row input.kid-age{ grid-column: 1 / -1; }
+}
+
+/* Cache générique, pour tous les blocs .hidden (enfants, etc.) */
+.hidden{ display:none !important; }
+
+/* Labels plus légers et harmonisés */
+.rsvp label,
+.assaha label,
+#childrenLabel{
+  font-weight: 500;           /* au lieu de 600 “gras” */
+  color:#5b5044;              /* doux */
+}
+
+/* Bouton Envoyer : discret, beige, arrondi/petit */
+.submit-button{
+  background: var(--primary); /* déjà beige doré chez toi */
+  color:#fff;
+  border:none;
+  border-radius:999px;
+  padding:10px 18px;          /* plus petit */
+  font-weight:600;            /* léger/ferme, pas trop gras */
+  font-size:.98rem;
+}
+
+/* Enfants : grille compacte & mobile friendly (tu as déjà la base) */
+.kids-list{ display:grid; gap:8px; margin-top:8px; }
+.kid-row{ display:grid; grid-template-columns: 1fr 1fr 90px; gap:8px; }
+.kid-row input{ width:100%; }
+html[dir="rtl"] .kid-row{ direction: rtl; }
+@media (max-width:520px){
+  .kid-row{ grid-template-columns: 1fr 1fr; }
+  .kid-row input.kid-age{ grid-column: 1 / -1; }
+}
+/* RSVP — enfants */
+.kids-list{ display:grid; gap:8px; margin-top:8px; }
+.kid-row{ display:grid; grid-template-columns: 1fr 1fr 90px; gap:8px; }
+.kid-row input{ width:100%; }
+.kid-row .kid-age{ text-align:center; }
+html[dir="rtl"] .kid-row{ direction: rtl; }
+@media (max-width:520px){
+  .kid-row{ grid-template-columns: 1fr 1fr; }
+  .kid-row .kid-age{ grid-column: 1 / -1; }
+}
