@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Natanel & Ora — Invitation</title>
+  <meta name="description" content="Invitation au mariage de Natanël & Ora — 7 janvier 2026 (19 Tevet 5786)" />
+
+  <!-- Polices -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Cardo:wght@400;700&family=Great+Vibes&family=Noto+Serif+Hebrew:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- AOS + CircleType -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/circletype@2.3.0/dist/circletype.min.js"></script>
+
+  <!-- Styles globaux -->
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Styles rapides spécifiques à cette page (complètent styles.css) -->
+  <style>
+    :root { --primary-color:#B78C54; }
+
+    .parents-duo{
+      display:flex;justify-content:space-between;gap:24px;
+      max-width:980px;margin:0 auto 8px;
+      font-family:'Playfair Display',serif;
+      font-size:clamp(18px,2.2vw,26px);line-height:1.4;
+    }
+    .parents-duo span{white-space:nowrap}
+    @media (max-width:700px){ .parents-duo{flex-direction:column;align-items:center;gap:6px} }
+
+    /* Bloc prénoms calligraphiés */
+    .names-calligraphy{
+      display:flex;justify-content:center;align-items:flex-end;gap:18px;
+      margin:.8rem auto 0;text-align:center;flex-wrap:wrap;
+    }
+    .names-calligraphy .script {
+  font-family: "Great Vibes", cursive;
+  font-size: clamp(46px, 8vw, 110px);
+  line-height: .9;
+  color: var(--primary-color); /* <-- même couleur que les chiffres */
+  text-shadow: 0 1px 1px rgba(255,255,255,.6);
+}
+
+    .names-calligraphy .amp{
+      font-family:"Playfair Display",serif;font-weight:700;color:#7d5d3a;
+      font-size:clamp(22px,3.5vw,36px);margin:0 .15em .15em;
+    }
+    .names-calligraphy .name-right{position:relative;display:inline-flex;flex-direction:column;align-items:center;}
+    .names-calligraphy .under{
+      display:block;font-family:"Playfair Display",serif;font-weight:600;letter-spacing:.02em;
+      font-size:clamp(14px,1.9vw,22px);line-height:1.1;color:#7d5d3a;margin-top:-4px;
+    }
+
+    /* נתנאל séparé sous le bloc prénoms */
+    .hebrew-bottom{
+      font-family:"Noto Serif Hebrew",serif;
+      font-size:clamp(20px,3vw,30px);
+      color:#5b4630;margin:.6rem 0 .2rem;text-align:center;
+    }
+
+    /* Dédicace plus discrète */
+    .dedic.small{font-size:clamp(13px,1.6vw,16px);color:#6a625a;max-width:860px;margin:.8rem auto 0}
+    .accent{color:var(--primary-color);font-weight:700}
+    .bzh{margin-right:.25em}
+
+    /* Uniformiser bouton Waze avec style Agenda */
+.btn-houppa.waze-button {
+  background: var(--primary-color);
+  color: white;
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.btn-houppa.waze-button:hover {
+  background: #9a6e3f; /* un doré un peu plus foncé */
+  transform: translateY(-2px);
+}
+/* Noms dans la carte (plus compacts que le H1 d’accueil) */
+.names-calligraphy.in-card {
+  margin: .6rem auto .2rem;
+  gap: 14px;
+}
+.names-calligraphy.in-card .script {
+  font-size: clamp(38px, 7vw, 92px);
+  line-height: .9;
+}
+.names-calligraphy.in-card .amp {
+  font-size: clamp(20px, 4.5vw, 40px);
+}
+
+/* En mode hébreu: police hébraïque pour les prénoms du bloc carte */
+.he-mode .names-calligraphy.in-card .script {
+  font-family: "Noto Serif Hebrew", serif;
+  font-weight: 600;
+}
+
+
+  </style>
+</head>
+
+<body>
+  <!-- Barre de progression scroll -->
+  <div id="scroll-progress"></div>
+
+  <!-- HEADER -->
+  <header id="navbar" class="transparent">
+    <nav>
+      <img src="logo.png" alt="Logo" class="logo" id="logo">
+      <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+      <div class="nav-links" id="nav-links">
+        <a href="#accueil" id="link_accueil">Accueil</a>
+        <a href="#houppa-soiree" id="link_houppa">Houppa & Soirée</a>
+        <a href="#formulaire" id="link_rsvp">RSVP</a>
+      </div>
+      <div id="language-switcher">
+        <button type="button" data-lang-btn="fr" title="Français">🇫🇷</button>
+        <button type="button" data-lang-btn="he" title="עברית">🇮🇱</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section id="accueil" class="reveal">
+    <div class="overlay">
+      <h1 class="names names-font">
+        <span class="bride">Natanel</span> <span class="et">&</span> <span class="groom">Ora</span>
+      </h1>
+
+      <!-- Compteur élégant (doré, calligraphie) -->
+      <div class="compteur compteur-elegant" id="countdown" data-date="2026-01-07T18:45:00">
+        <div class="compteur-bloc"><div class="nombre jours">00</div><div class="label" data-i18n="days">Jours</div></div>
+        <div class="compteur-bloc"><div class="nombre heures">00</div><div class="label" data-i18n="hours">Heures</div></div>
+        <div class="compteur-bloc"><div class="nombre minutes">00</div><div class="label" data-i18n="minutes">Minutes</div></div>
+        <div class="compteur-bloc"><div class="nombre secondes">00</div><div class="label" data-i18n="seconds">Secondes</div></div>
+      </div>
+
+      <a id="enterSite" href="#houppa-soiree" class="landing-button">Voir l’invitation</a>
+    </div>
+    <img class="hero-bg" src="10026.jpg" alt="Fond marbre accueil">
+  </section>
+
+  <!-- HOUPPA & SOIRÉE -->
+  <section id="houppa-soiree" class="paper">
+    <!-- Fond floral -->
+    <img class="paper-bg" src="bg-floral.jpeg" alt="" aria-hidden="true">
+
+    <!-- Phrase hébraïque en arc + logo central -->
+    <h2 id="arc-title" class="arc" data-aos="fade-down" data-aos-duration="1000"> הלכ  לוקו  ןתח  לוק  החמש  לוקו   ןושש   לוק </h2>
+    <img class="middle-logo" src="logo.png" alt="Monogramme" data-aos="fade-down" data-aos-duration="1000">
+
+    <h2 id="houppa_title" class="script-title" data-aos="fade-down" data-aos-duration="1000">Houppa &amp; Soirée</h2>
+    <div class="hairline" aria-hidden="true"></div>
+
+    <div class="paper-inner container">
+
+      <!-- Parents -->
+<!-- PARENTS + GRANDS-PARENTS EN 3 LIGNES DE CHAQUE CÔTÉ -->
+<div class="parents-grid" data-aos="fade-up" data-aos-duration="900">
+  <div class="col">
+    <div class="line">Mr &amp; Mme Dov et Sarah Harrouch</div>
+    <div class="line">Mr Michel Harrouch</div>
+    <div class="line">Mme Aline Temim</div>
+  </div>
+
+  <div class="col">
+    <div class="line">Mr &amp; Mme Yossef et Nathalie Besnainou</div>
+    <div class="line">Mr &amp; Mme Adolphe Mahlouf &amp; Mireille Tapiero</div>
+    <div class="line"> Mme Jasmine Besnainou</div>
+  </div>
+</div>
+<!-- Texte de remerciement (haut) -->
+<p class="invitation-text invitation-top" data-aos="fade-up" data-aos-duration="900" style="max-width:960px;margin:1rem auto 0;text-align:center;">
+  Remercient <strong>Hachem</strong> d’avoir la joie de vous convier <br>
+  au mariage de leurs enfants et petits-enfants,
+</p>
+
+<!-- Prénoms calligraphiés (centre de carte) -->
+<div id="namesInline" class="names-calligraphy" data-aos="zoom-in" data-aos-duration="800">
+  <span id="namesInlineBride" class="name-left script">
+    Natanel
+    <span class="under he-only">נתנאל</span>
+  </span>
+  <span id="namesInlineAnd" class="amp">&amp;</span>
+  <span id="namesInlineGroom" class="name-right script">
+    Ora
+    <span class="under he-only">מרים</span>
+  </span>
+</div>
+
+<!-- Suite de la phrase (bas) -->
+<p class="invitation-text invitation-bottom" data-aos="fade-up" data-aos-duration="900" style="max-width:960px;margin:.4rem auto 0;text-align:center;">
+  à la <strong>Houppa</strong> qui aura lieu le
+  <span class="accent"><strong>7 janvier 2026</strong></span>
+  à <span class="accent"><strong>18h45 précise</strong></span>.
+</p>
+
+<!-- Phrase “Ainsi qu’à la réception…” : garder en dehors pour que le JS la traduise -->
+<p id="receptionLine" class="hp" data-aos="fade-up" data-aos-duration="900" data-aos-delay="720" style="text-align:center;">
+  Ainsi qu’à la réception qui suivra.
+</p>
+
+
+        <!-- Lieu (hébreu) -->
+        <p class="hp place rtl" data-aos="fade-up" data-aos-duration="900" data-aos-delay="520">
+        אמרלד —הגן השקוף בית שמש, ישראל
+       </p>
+       <!-- Réception --> <p class="hp" data-aos="fade-up" data-aos-duration="900" data-aos-delay="720"> </p>
+        <!-- Horaires -->
+        <p class="hp timings italic" data-aos="fade-up" data-aos-duration="900" data-aos-delay="600">
+          <span class="accent">Kabalat Panim à 17h45</span>,
+          <span class="accent">Houppa à 18h45 précise</span>
+        </p>
+
+        <!-- Réception -->
+
+
+        <!-- Dédicace (petit) -->
+        <p class="hp dedic small" data-aos="fade-up" data-aos-duration="900" data-aos-delay="820">
+          Une pensée particulière pour nos chers grand parents : <br> Mme&nbsp;Ruth&nbsp;Harrouch, M.&nbsp;Serge&nbsp;Yossef&nbsp;Temim, et M.&nbsp;Samuel&nbsp;Haim&nbsp;Besnainou.
+        </p>
+
+        <!-- Boutons -->
+        <div class="btn-event" style="margin-top:18px;" data-aos="fade-up" data-aos-duration="900" data-aos-delay="920">
+          <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Mariage+de+Natanël+%26+Ora&dates=20260107T164500Z/20260107T220000Z&details=Houppa+%C3%A0+18h45+pr%C3%A9cise,+Kabalat+Panim+%C3%A0+17h45&location=אמרלד+—+הגן+השקוף,+בית+שמש,+Isra%C3%ABl&sf=true&output=xml" 
+   target="_blank" 
+   class="btn-houppa calendar-button">
+   📅 Ajouter au calendrier
+</a>
+          <a class="btn-houppa waze-button" id="wazeBtn" href="https://ul.waze.com/ul?ll=31.7400%2C34.9880&navigate=yes" target="_blank" rel="noopener">Ouvrir dans Waze</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RSVP -->
+  <section id="formulaire" class="rsvp">
+    <div class="form-container" data-aos="fade-up" data-aos-delay="100">
+      <h2>Confirmez votre présence</h2>
+      <form id="rsvpForm" method="post" novalidate>
+        <div class="input-name">
+          <input type="text" name="first_name" placeholder="Prénom *" required>
+          <input type="text" name="last_name" placeholder="Nom *" required>
+        </div>
+        <small class="form-hint">Merci d’indiquer un seul nom et prénom ici.</small>
+        <input type="email" name="email" placeholder="Votre email">
+        <input type="tel" name="tel" placeholder="Votre téléphone *" required>
+        <div class="select-wrapper">
+          <select name="presence" id="presenceSelect" required>
+            <option disabled selected>Je confirme ma présence</option>
+            <option value="1">Oui, je serai présent(e) 🎉</option>
+            <option value="0">Non, je ne peux pas venir 😢</option>
+          </select>
+        </div>
+        <!-- Enfants -->
+<div id="childrenSection" class="hidden">
+  <div class="assaha">
+    <label id="childrenLabel">Des enfants vous accompagnent (ילדים)?</label>
+    <div class="radio-group">
+      <label><input type="radio" name="has_kids" value="1"> Oui</label>
+      <label><input type="radio" name="has_kids" value="0" checked> Non</label>
+    </div>
+  </div>
+
+  <div id="kidsCountWrapper" class="select-wrapper hidden">
+    <select id="kidsCountSelect" name="kids_count">
+      <option disabled selected>Combien d’enfants ?</option>
+      <option value="1">1 enfant</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+    </select>
+  </div>
+
+  <!-- Champs auto-générés -->
+  <div id="kidsList" class="kids-list hidden" aria-live="polite"></div>
+</div>
+
+        <div id="come_to" class="select-wrapper hidden">
+          <select name="come_to" id="preferenceSelect">
+            <option disabled selected>Je viens pour :</option>
+            <option value="0">Uniquement à la houppa</option>
+            <option value="1">Houppa & soirée</option>
+          </select>
+        </div>
+        <div id="nombre-wrapper" class="hidden">
+          <input type="number" name="nb_personne" placeholder="Nombre total de personnes (vous inclus) *" min="1">
+          <small id="preventive_message_2" class="form-hint">N’écrivez pas votre nom ici. Uniquement les accompagnants.</small>
+        </div>
+        <div id="assaha">
+          <div class="assaha">
+            <label>Souhaitez-vous une navette ?</label>
+            <div class="radio-group">
+              <label><input type="radio" name="assaha" value="1"> Oui</label>
+              <label><input type="radio" name="assaha" value="0" checked> Non</label>
+            </div>
+          </div>
+          <div id="villeAssahaWrapper" class="select-wrapper hidden">
+            <select name="ville_assaha">
+              <option disabled selected>Depuis quelle ville ?</option>
+              <option value="jerusalem">Jérusalem</option>
+              <option value="telaviv">Ashdod</option>
+            </select>
+          </div>
+        </div>
+        <textarea name="message" placeholder="Un Mazal Tov pour les mariés ?"></textarea>
+        <input type="submit" value="Envoyer" class="submit-button">
+      </form>
+      <div id="confirmation-message" class="message success-message" style="display:none;" role="alert">
+        <strong>Message envoyé avec succès 💌</strong>
+      </div>
+      <div id="error-message" style="display:none;color:#c00;margin-top:10px;"></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer footer-invitation">
+    <div class="footer-content">
+      <p>© Natanël & Ora — 2026</p>
+    </div>
+  </footer>
+
+  <!-- Audio + boutons flottants -->
+  <audio id="backgroundMusic" loop>
+    <source src="תפילת כלה Tefilat Kallah-other-C major-65bpm-440hz.mp3" type="audio/mpeg">
+  </audio>
+  <button id="scrollToTop" title="Remonter en haut">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <!-- Scripts -->
+  <script defer src="script.js"></script>
+  <script>
+    // Init AOS
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.AOS) AOS.init();
+      // Arc hébreu
+      const arc = document.getElementById('arc-title');
+      if (arc && window.CircleType) new CircleType(arc).radius(600);
+    });
+  </script>
+</body>
+</html>
